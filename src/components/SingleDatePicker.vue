@@ -36,7 +36,7 @@
 	})
 
 	const emit = defineEmits(['update:modelValue'])
-	const selectMonth = ref(false)
+	const selectMonth = ref(true)
 	const uniqueId = generateUniqueId()
 	const currentMonth = ref(new Date().getMonth())
 	const currentYear = ref(new Date().getFullYear())
@@ -93,10 +93,62 @@
 		emit('update:modelValue', date)
 	}
 
+	function changeYear(event: Event) {
+		const target = event.target as HTMLInputElement
+		const year = parseInt(target.value)
+		if (year) currentYear.value = year
+	}
+
+	function adjustYear() {
+		if (currentYear.value < 100) currentYear.value = parseInt(`20${currentYear.value}`)
+	}
+
+	function monthNotAvailable() {
+		return false
+	}
+
 </script>
 
 <template>
 	<div :id="`__datenel-${uniqueId}`">
+		<div class='datenel-component' role="dialog" aria-label="Date selection panel, you are now at month and year quick-select" v-if="selectMonth">
+			<div class='__datenel_header'>
+				<button class='__datenel_stepper' @click="() => {
+					if (currentYear <= 100) return
+					currentYear -= 1
+				}" :aria-label="`Go to last year, ${currentYear - 1}, you are now at year ${currentYear}`"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path></svg></button>
+				<input class='__datenel_indicator'
+					v-model="currentYear"
+					@change="changeYear"
+					@blur="adjustYear"
+					aria-label="Year input, type a year to go to that year"
+				/>
+				<button class='__datenel_stepper' @click="() => {
+					if (currentYear >= 9999) return
+					currentYear += 1
+				}" :aria-label="`Go to next year, ${currentYear + 1}, you are now at year ${currentYear}`"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13.1717 12.0007L8.22192 7.05093L9.63614 5.63672L16.0001 12.0007L9.63614 18.3646L8.22192 16.9504L13.1717 12.0007Z"></path></svg></button>
+			</div>
+
+			<div class='__datenel_body'>
+				<div class='__datenel_month-selector-body'>
+					<button
+						v-for="(_, index) in 12"
+						:class="`__datenel_item ${monthNotAvailable() && '__datenel_not-available'}`"
+						key={index}
+						@click="() => {
+							currentMonth = index
+							selectMonth = false
+						}"
+						:aria-label="`Go to ${new Date(currentYear, index).toLocaleString(localization, { month: 'long' })} of the year ${currentYear}`"
+						:disabled="monthNotAvailable()"
+						:aria-hidden="monthNotAvailable()"
+					>
+						{{new Date(currentYear, index).toLocaleString(localization, { month: 'long' })}}
+					</button>
+				</div>
+			</div>
+		</div>
+
 		<div class='datenel-component' role="dialog" aria-label="Date selection panel" v-if="!selectMonth">
 			<div class='__datenel_header'>
 				<button class='__datenel_stepper' @click="goToLastMonth()" :aria-label="`Go to last month, ${new Date(currentYear, currentMonth - 1).toLocaleString('default', { month: 'long', year: 'numeric' })}`"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path></svg></button>
@@ -121,7 +173,7 @@
 						:disabled="notAvailable(date)"
 					>
 							{{date.getDate()}}
-							<svg v-if="date.toDateString() === new Date().toDateString()" xmlns="http://www.w3.org/2000/svg" className='__datenel_today-indicator' viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path></svg>
+							<svg v-if="date.toDateString() === new Date().toDateString()" xmlns="http://www.w3.org/2000/svg" class='__datenel_today-indicator' viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path></svg>
 						</button>
 				</div>
 			</div>
