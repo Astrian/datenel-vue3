@@ -1,5 +1,4 @@
 export default (currentDate: number, currentYear: number): Date[] => {
-	console.log(currentDate, currentYear)
 	const baselineDate = new Date(currentYear, currentDate)
 
 	const calendarStart = new Date(baselineDate.getFullYear(), baselineDate.getMonth(), 1)
