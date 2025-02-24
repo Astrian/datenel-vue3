@@ -2,20 +2,17 @@
 	import { ref, defineProps, watch, onMounted, toRefs, getCurrentInstance } from 'vue'
 	import { generateUniqueId, applyColor, getL10Weekday, getCalendarDates } from '../utils'
 
-	interface SingleDatePickerProps {
-		colorScheme: {
-			mainColor: string
-			accentColor: string
-			borderColor: string
-			hoverColor: string
-			reversedColor: string
-		},
-		localization: string
+	interface SingleDatePickerPropsColorScheme {
+		mainColor: string
+		accentColor: string
+		borderColor: string
+		hoverColor: string
+		reversedColor: string
 	}
 
 	const props = defineProps({
 		colorScheme: {
-			type: Object as () => SingleDatePickerProps['colorScheme'],
+			type: Object as () => SingleDatePickerPropsColorScheme,
 			default: () => ({
 				mainColor: '#000000',
 				accentColor: '#000000',
