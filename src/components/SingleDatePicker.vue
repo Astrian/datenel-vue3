@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import { ref, defineProps, watch, onMounted, toRefs, getCurrentInstance } from 'vue'
+	import { ref, defineProps, watch, onMounted, toRefs, getCurrentInstance, PropType } from 'vue'
 	import { generateUniqueId, applyColor, getL10Weekday, getCalendarDates } from '../utils'
 
 	interface SingleDatePickerPropsColorScheme {
@@ -9,6 +9,8 @@
 		hoverColor: string
 		reversedColor: string
 	}
+
+	type SingleDatePickerPropsAvailableDates = [Date | null, Date | null]
 
 	const props = defineProps({
 		colorScheme: {
@@ -29,6 +31,10 @@
 		modelValue: {
 			type: Date,
 			required: false,
+		},
+		availableRange: {
+			type: Array as unknown as PropType<SingleDatePickerPropsAvailableDates>,
+			required: false,
 		}
 	})
 
@@ -40,6 +46,8 @@
 	const l10nDays = ref<string[]>([])
 	const dates = ref<Date[]>([])
 	const hasCloseListener = getCurrentInstance()?.vnode?.props?.onClose !== undefined
+	const availableRangeStart = ref<Date | null>(null)
+	const availableRangeEnd = ref<Date | null>(null)
 
 	const { colorScheme, localization } = toRefs(props)
 
@@ -49,6 +57,10 @@
 
 	watch([currentMonth, currentYear], () => {
 		dates.value = getCalendarDates(currentMonth.value, currentYear.value)
+	})
+
+	watch([props.availableRange], () => {
+		calculateAvailableRange()
 	})
 
 	onMounted(() => {
@@ -63,6 +75,8 @@
 			currentYear.value = new Date().getFullYear()
 		}
 		dates.value = getCalendarDates(currentMonth.value, currentYear.value)
+
+		calculateAvailableRange()
 	})
 
 	function goToLastMonth() {
@@ -83,8 +97,8 @@
 		}
 	}
 
-	function notAvailable(date: Date) {
-		return currentMonth.value !== date.getMonth() //TODO: available date ranges
+	function notAvailable(date: Date): boolean {
+		return currentMonth.value !== date.getMonth() || (availableRangeStart.value !== null && date < availableRangeStart.value) || (availableRangeEnd.value !== null && date > availableRangeEnd.value)
 	}
 
 	function selectDate(date: Date) {
@@ -107,6 +121,42 @@
 
 	function closePanel() {
 		emit('close')
+	}
+
+	function calculateAvailableRange() {
+		if (!props.availableRange) {
+			availableRangeStart.value = null
+			availableRangeEnd.value = null
+			return
+		}
+
+		if (props.availableRange.length !== 2) {
+			console.warn('Invalid availableRange: The length of the array should be 2. The parameter will be ignored.')
+			availableRangeStart.value = null
+			availableRangeEnd.value = null
+			return
+		}
+
+		const [start, end] = props.availableRange
+
+		if (start && end) {
+			if (start > end) {
+				availableRangeStart.value = end
+				availableRangeEnd.value = start
+			} else {
+				availableRangeStart.value = start
+				availableRangeEnd.value = end
+			}
+		} else if (start && !end) {
+			availableRangeStart.value = start
+			availableRangeEnd.value = null
+		} else if (!start && end) {
+			availableRangeStart.value = null
+			availableRangeEnd.value = end
+		} else {
+			availableRangeStart.value = null
+			availableRangeEnd.value = null
+		}
 	}
 
 </script>
