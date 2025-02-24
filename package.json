@@ -7,8 +7,8 @@
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "vue": "^3.5.13"
+  "peerDependencies": {
+    "vue": ">=3.5.13"
   },
   "devDependencies": {
     "@types/node": "^22.13.5",
@@ -19,5 +19,14 @@
     "typescript": "~5.7.2",
     "vite": "^6.1.0",
     "vue-tsc": "^2.2.0"
-  }
+  },
+  "exports": {
+    "types": "./dist/src/index.d.ts",
+    "import": "./dist/index.es.js",
+    "require": "./dist/index.umd.js",
+    "default": "./dist/index.es.js"
+  },
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
 }
