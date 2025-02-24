@@ -91,7 +91,6 @@
 	}
 
 	function selectDate(date: Date) {
-		console.log(date)
 		emit('update:modelValue', date)
 	}
 
