@@ -28,40 +28,73 @@
 			}),
 			required: false,
 		},
+		/**
+		 * Localization
+		 * @description The language code that will be used to localize the panel.
+		 * 
+		 * Accept standard ISO 639-1 language code, such as 'zh-CN', 'en-US', 'ja-JP', etc. Note 
+		 * that it will not effect to the screen reader, but the screen reader will still read the 
+		 * date in the user’s language.
+		 * 
+		 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#localization}
+		 * @default navigator.language
+		 */
 		localization: {
 			type: String,
 			required: false,
 		},
+		/**
+			* Value of the selected date.
+			* 
+			* @description Control the selected
+			* date programmatically, including situations like provide a default value or control the selected 
+			* date by parent component.
+			* 
+			* @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#value}
+			* 
+			* @example new Date(2025, 0, 1)
+			* @default undefined (the panel will be in read-only mode)
+			*/
 		modelValue: {
 			type: Date,
 			required: false,
 		},
 		/**
-	 * Available range of dates
-	 * 
-	 * @description Limit a range of dates that can be selected. It should be an array of two dates, which the first
-	 * one is the available range start date, and the second one is the available range end date. 
-	 * 
-	 * The parameter will be ignored if the array length is not 2.
-	 * 
-	 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#availablerange}
-	 * 
-	 * @example [new Date(2025, 0, 1), new Date(2025, 11, 31)]
-	 * @example [new Date(2025, 0, 1), null]
-	 * @example [null, new Date(2025, 11, 31)]
-	 * @example [new Date(2025, 11, 31), new Date(2025, 0, 1)]
-	 * @default undefined
-	 */
+		 * Available range of dates
+		 * 
+		 * @description Limit a range of dates that can be selected. It should be an array of two dates, which the first
+		 * one is the available range start date, and the second one is the available range end date. 
+		 * 
+		 * The parameter will be ignored if the array length is not 2.
+		 * 
+		 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#availablerange}
+		 * 
+		 * @example [new Date(2025, 0, 1), new Date(2025, 11, 31)]
+		 * @example [new Date(2025, 0, 1), null]
+		 * @example [null, new Date(2025, 11, 31)]
+		 * @example [new Date(2025, 11, 31), new Date(2025, 0, 1)]
+		 * @default undefined
+		 */
 		availableRange: {
 			type: Array as unknown as PropType<SingleDatePickerPropsAvailableDates>,
+			required: false,
+		},
+		/**
+		 * Event handler when the panel is closed.
+		 * @description User requires to close the panel without select a specific date. Note 
+		 * that the close button is not visible, but can be read by screen reader. The close 
+		 * button for the screen reader is only available when this prop is not `undefined`.
+		 * 
+		 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#onclose-void}
+		 * 
+		 * @default undefined
+		 */
+		close: {
+			type: Function,
 			required: false,
 		}
 	})
 
-	/**
-	 * @typedef {Object} Emits
-	 * @property {Function} close - 触发关闭事件
-	 */
 	const emit = defineEmits(['update:modelValue', 'close'])
 	const selectMonth = ref(false)
 	const uniqueId = generateUniqueId()
