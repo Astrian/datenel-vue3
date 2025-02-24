@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import {SingleDatePicker} from '../src'
+import {ref} from 'vue'
+
+const date = ref(new Date())
 </script>
 
 <template>
+  <div>{{date.toDateString()}}</div>
   <div class="container">
-    <SingleDatePicker />
+    <SingleDatePicker v-model="date" />
   </div>
 </template>
 

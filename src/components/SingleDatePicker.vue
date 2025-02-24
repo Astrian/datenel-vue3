@@ -28,9 +28,14 @@
 		localization: {
 			type: String,
 			required: false,
+		},
+		modelValue: {
+			type: Date,
+			required: false,
 		}
 	})
 
+	const emit = defineEmits(['update:modelValue'])
 	const selectMonth = ref(false)
 	const uniqueId = generateUniqueId()
 	const currentMonth = ref(new Date().getMonth())
@@ -51,6 +56,14 @@
 	onMounted(() => {
 		applyColor(uniqueId, colorScheme.value)
 		l10nDays.value = getL10Weekday(localization?.value || navigator.languages[0])
+		
+		if (props.modelValue) {
+			currentMonth.value = props.modelValue.getMonth()
+			currentYear.value = props.modelValue.getFullYear()
+		} else {
+			currentMonth.value = new Date().getMonth()
+			currentYear.value = new Date().getFullYear()
+		}
 		dates.value = getCalendarDates(currentMonth.value, currentYear.value)
 	})
 
@@ -79,6 +92,7 @@
 
 	function selectDate(date: Date) {
 		console.log(date)
+		emit('update:modelValue', date)
 	}
 
 </script>
@@ -97,10 +111,10 @@
 			<div class='__datenel_body'>
 				<div class='__datenel_calendar-view-body __datenel_grid' aria-live="polite">
 					<div class='__datenel_item __datenel_day-indicator' v-for="(day, index) in l10nDays" :key="index">{{ day }}</div>
-					<!-- ${selectedDate.toDateString() === date.toDateString() && '__datenel_active'} -->
+					<!--  -->
 					<button
 						v-for="date in dates"
-						:class="`__datenel_item __datenel_date ${notAvailable(date) && '__datenel_not-available'} `"
+						:class="`__datenel_item __datenel_date ${notAvailable(date) && '__datenel_not-available'} ${modelValue?.toDateString() === date.toDateString() && '__datenel_active'}`"
 						:key="date.toISOString()"
 						@click="selectDate(date)"
 						:aria-label="`${date.toLocaleString(localization, { dateStyle: 'full' })}${date.toDateString() === new Date().toDateString() ? ', this is today' : ''}, click to select this date`"
