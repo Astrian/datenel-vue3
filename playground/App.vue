@@ -8,7 +8,7 @@ const date = ref(new Date())
 <template>
   <div>{{date.toDateString()}}</div>
   <div class="container">
-    <SingleDatePicker :available-range="[new Date(2025, 0, 1), null]" v-model="date" />
+    <SingleDatePicker :available-range="[new Date(2025, 0, 1), null]" v-model="date" @close="" />
   </div>
 </template>
 

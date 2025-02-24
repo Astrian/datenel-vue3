@@ -13,6 +13,10 @@
 	type SingleDatePickerPropsAvailableDates = [Date | null, Date | null]
 
 	const props = defineProps({
+		/**
+		 * The color scheme of the component
+		 * @default { mainColor: '#000000', accentColor: '#000000', borderColor: '#e0e0e0', hoverColor: '#00000017', reversedColor: '#ffffff' }
+		 */
 		colorScheme: {
 			type: Object as () => SingleDatePickerPropsColorScheme,
 			default: () => ({
@@ -32,12 +36,32 @@
 			type: Date,
 			required: false,
 		},
+		/**
+	 * Available range of dates
+	 * 
+	 * @description Limit a range of dates that can be selected. It should be an array of two dates, which the first
+	 * one is the available range start date, and the second one is the available range end date. 
+	 * 
+	 * The parameter will be ignored if the array length is not 2.
+	 * 
+	 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#availablerange}
+	 * 
+	 * @example [new Date(2025, 0, 1), new Date(2025, 11, 31)]
+	 * @example [new Date(2025, 0, 1), null]
+	 * @example [null, new Date(2025, 11, 31)]
+	 * @example [new Date(2025, 11, 31), new Date(2025, 0, 1)]
+	 * @default undefined
+	 */
 		availableRange: {
 			type: Array as unknown as PropType<SingleDatePickerPropsAvailableDates>,
 			required: false,
 		}
 	})
 
+	/**
+	 * @typedef {Object} Emits
+	 * @property {Function} close - 触发关闭事件
+	 */
 	const emit = defineEmits(['update:modelValue', 'close'])
 	const selectMonth = ref(false)
 	const uniqueId = generateUniqueId()
