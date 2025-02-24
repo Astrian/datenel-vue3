@@ -15,6 +15,19 @@
 	const props = defineProps({
 		/**
 		 * The color scheme of the component
+		 * 
+		 * @description Customize the color scheme of the component.
+		 * 
+		 * The object should contain the following properties:
+		 * 
+		 * - `mainColor`: The main color of the panel, including the text color and the border color.
+		 * - `accentColor`: The accent color of the panel, including the background color of the selected date.
+		 * - `borderColor`: The border color of the panel, including the divider color between the header and the body.
+		 * - `hoverColor`: The hover color of the panel, including the hover background color of the date.
+		 * - `reversedColor`: The reversed color of the panel, including the text color of the selected date.
+		 * 
+		 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#colorscheme}
+		 * 
 		 * @default { mainColor: '#000000', accentColor: '#000000', borderColor: '#e0e0e0', hoverColor: '#00000017', reversedColor: '#ffffff' }
 		 */
 		colorScheme: {
