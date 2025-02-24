@@ -115,7 +115,13 @@
 		if (currentYear.value < 100) currentYear.value = parseInt(`20${currentYear.value}`)
 	}
 
-	function monthNotAvailable() {
+	function monthNotAvailable(month: number): boolean {
+		// When the last day of a month not inside the range of available dates
+		const lastDayOfMonth = new Date(currentYear.value, month + 1, 0)
+		if (availableRangeStart.value && lastDayOfMonth < availableRangeStart.value) return true
+		// When the first day of a month not inside the range of available dates
+		const firstDayOfMonth = new Date(currentYear.value, month, 1)
+		if (availableRangeEnd.value && firstDayOfMonth > availableRangeEnd.value) return true
 		return false
 	}
 
@@ -185,15 +191,15 @@
 				<div class='__datenel_month-selector-body'>
 					<button
 						v-for="(_, index) in 12"
-						:class="`__datenel_item ${monthNotAvailable() && '__datenel_not-available'}`"
+						:class="`__datenel_item ${monthNotAvailable(index) && '__datenel_not-available'} ${currentMonth === index && '__datenel_active'}`"
 						key={index}
 						@click="() => {
 							currentMonth = index
 							selectMonth = false
 						}"
 						:aria-label="`Go to ${new Date(currentYear, index).toLocaleString(localization, { month: 'long' })} of the year ${currentYear}`"
-						:disabled="monthNotAvailable()"
-						:aria-hidden="monthNotAvailable()"
+						:disabled="monthNotAvailable(index)"
+						:aria-hidden="monthNotAvailable(index)"
 					>
 						{{new Date(currentYear, index).toLocaleString(localization, { month: 'long' })}}
 					</button>
