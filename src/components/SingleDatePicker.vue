@@ -86,7 +86,6 @@
 	}
 
 	function notAvailable(date: Date) {
-		console.log(`currentMonth: ${currentMonth.value}, date: ${date.toString()}`)
 		return currentMonth.value !== date.getMonth() //TODO: available date ranges
 	}
 
