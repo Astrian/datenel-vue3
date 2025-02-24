@@ -83,6 +83,13 @@
 				.__datenel_item.__datenel_date {
 					border-radius: 50%;
 
+					svg {
+						position: absolute;
+						width: 0.25rem;
+						height: 0.25rem;
+						bottom: 0.25rem;
+					}
+
 					&.__datenel_extra-month, &.__datenel_not-available {
 						cursor: default;
 					}

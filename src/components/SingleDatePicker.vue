@@ -1,6 +1,6 @@
 <script setup lang="ts">
 	import { ref, defineProps, watch, onMounted, toRefs } from 'vue'
-	import { generateUniqueId, applyColor, getL10Weekday } from '../utils'
+	import { generateUniqueId, applyColor, getL10Weekday, getCalendarDates } from '../utils'
 
 	interface SingleDatePickerProps {
 		colorScheme: {
@@ -36,6 +36,7 @@
 	const currentMonth = ref(new Date().getMonth())
 	const currentYear = ref(new Date().getFullYear())
 	const l10nDays = ref<string[]>([])
+	const dates = ref<Date[]>([])
 
 	const { colorScheme, localization } = toRefs(props)
 
@@ -43,9 +44,14 @@
 		applyColor(uniqueId, newVal)
 	})
 
+	watch([currentMonth, currentYear], () => {
+		dates.value = getCalendarDates(currentMonth.value, currentYear.value)
+	})
+
 	onMounted(() => {
 		applyColor(uniqueId, colorScheme.value)
 		l10nDays.value = getL10Weekday(localization?.value || navigator.languages[0])
+		dates.value = getCalendarDates(currentMonth.value, currentYear.value)
 	})
 
 	function goToLastMonth() {
@@ -66,6 +72,15 @@
 		}
 	}
 
+	function notAvailable(date: Date) {
+		console.log(`currentMonth: ${currentMonth.value}, date: ${date.toString()}`)
+		return currentMonth.value !== date.getMonth() //TODO: available date ranges
+	}
+
+	function selectDate(date: Date) {
+		console.log(date)
+	}
+
 </script>
 
 <template>
@@ -82,6 +97,20 @@
 			<div class='__datenel_body'>
 				<div class='__datenel_calendar-view-body __datenel_grid' aria-live="polite">
 					<div class='__datenel_item __datenel_day-indicator' v-for="(day, index) in l10nDays" :key="index">{{ day }}</div>
+					<!-- ${selectedDate.toDateString() === date.toDateString() && '__datenel_active'} -->
+					<button
+						v-for="date in dates"
+						:class="`__datenel_item __datenel_date ${notAvailable(date) && '__datenel_not-available'} `"
+						:key="date.toISOString()"
+						@click="selectDate(date)"
+						:aria-label="`${date.toLocaleString(localization, { dateStyle: 'full' })}${date.toDateString() === new Date().toDateString() ? ', this is today' : ''}, click to select this date`"
+						:tabIndex="currentMonth !== date.getMonth() ? -1 : 0"
+						:aria-hidden="notAvailable(date)"
+						:disabled="notAvailable(date)"
+					>
+							{{date.getDate()}}
+							<svg v-if="date.toDateString() === new Date().toDateString()" xmlns="http://www.w3.org/2000/svg" className='__datenel_today-indicator' viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path></svg>
+						</button>
 				</div>
 			</div>
 		</div>
