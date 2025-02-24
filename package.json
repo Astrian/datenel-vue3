@@ -22,14 +22,14 @@
     "vue-tsc": "^2.2.0"
   },
   "exports": {
-    "types": "./dist_types/src/index.js",
+    "types": "./dist_types/src/index.d.ts",
     "import": "./dist/datenel-vue3.js",
     "require": "./dist/datenel-vue3.umd.cjs",
     "default": "./dist/datenel-vue3.umd.cjs"
   },
   "main": "dist/datenel-vue3.umd.cjs",
   "module": "dist/datenel-vue3.js",
-  "types": "dist_types/src/index.js",
+  "types": "dist_types/src/index.d.ts",
   "files": [
     "dist",
     "dist_types"
