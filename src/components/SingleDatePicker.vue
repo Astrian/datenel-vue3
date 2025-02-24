@@ -49,7 +49,7 @@
 	const availableRangeStart = ref<Date | null>(null)
 	const availableRangeEnd = ref<Date | null>(null)
 
-	const { colorScheme, localization } = toRefs(props)
+	const { colorScheme, localization, availableRange } = toRefs(props)
 
 	watch(colorScheme, newVal => {
 		applyColor(uniqueId, newVal)
@@ -59,7 +59,7 @@
 		dates.value = getCalendarDates(currentMonth.value, currentYear.value)
 	})
 
-	watch([props.availableRange], () => {
+	watch([availableRange], () => {
 		calculateAvailableRange()
 	})
 
