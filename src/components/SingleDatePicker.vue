@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import { ref, defineProps, watch, onMounted, toRefs } from 'vue'
+	import { ref, defineProps, watch, onMounted, toRefs, getCurrentInstance } from 'vue'
 	import { generateUniqueId, applyColor, getL10Weekday, getCalendarDates } from '../utils'
 
 	interface SingleDatePickerProps {
@@ -35,13 +35,14 @@
 		}
 	})
 
-	const emit = defineEmits(['update:modelValue'])
+	const emit = defineEmits(['update:modelValue', 'close'])
 	const selectMonth = ref(false)
 	const uniqueId = generateUniqueId()
 	const currentMonth = ref(new Date().getMonth())
 	const currentYear = ref(new Date().getFullYear())
 	const l10nDays = ref<string[]>([])
 	const dates = ref<Date[]>([])
+	const hasCloseListener = getCurrentInstance()?.vnode?.props?.onClose !== undefined
 
 	const { colorScheme, localization } = toRefs(props)
 
@@ -107,11 +108,15 @@
 		return false
 	}
 
+	function closePanel() {
+		emit('close')
+	}
+
 </script>
 
 <template>
-	<div :id="`__datenel-${uniqueId}`">
-		<div class='datenel-component' role="dialog" aria-label="Date selection panel, you are now at month and year quick-select" v-if="selectMonth">
+	<div :id="`__datenel-${uniqueId}`" class='datenel-component'>
+		<div role="dialog" aria-label="Date selection panel, you are now at month and year quick-select" v-if="selectMonth">
 			<div class='__datenel_header'>
 				<button class='__datenel_stepper' @click="() => {
 					if (currentYear <= 100) return
@@ -149,7 +154,7 @@
 			</div>
 		</div>
 
-		<div class='datenel-component' role="dialog" aria-label="Date selection panel" v-if="!selectMonth">
+		<div role="dialog" aria-label="Date selection panel" v-if="!selectMonth">
 			<div class='__datenel_header'>
 				<button class='__datenel_stepper' @click="goToLastMonth()" :aria-label="`Go to last month, ${new Date(currentYear, currentMonth - 1).toLocaleString('default', { month: 'long', year: 'numeric' })}`"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path></svg></button>
 				<button class='__datenel_indicator' @click="selectMonth = true" :aria-label="`You are now at ${new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}. Click here to quick-select month or year.`">
@@ -178,6 +183,8 @@
 				</div>
 			</div>
 		</div>
+
+		<button class='__datenel_sr-only' @click="closePanel" v-if="hasCloseListener">Close the panel</button>
 	</div>
 </template>
 
