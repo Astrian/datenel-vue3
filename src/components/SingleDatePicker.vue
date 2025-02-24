@@ -36,7 +36,7 @@
 	})
 
 	const emit = defineEmits(['update:modelValue'])
-	const selectMonth = ref(true)
+	const selectMonth = ref(false)
 	const uniqueId = generateUniqueId()
 	const currentMonth = ref(new Date().getMonth())
 	const currentYear = ref(new Date().getFullYear())
