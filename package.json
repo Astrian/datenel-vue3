@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
+    "prepare": "npm run build",
     "preview": "vite preview"
   },
   "peerDependencies": {
@@ -21,12 +22,16 @@
     "vue-tsc": "^2.2.0"
   },
   "exports": {
-    "types": "./dist/src/index.d.ts",
-    "import": "./dist/index.es.js",
-    "require": "./dist/index.umd.js",
-    "default": "./dist/index.es.js"
+    "types": "./dist_types/src/index.js",
+    "import": "./dist/datenel-vue3.js",
+    "require": "./dist/datenel-vue3.umd.cjs",
+    "default": "./dist/datenel-vue3.umd.cjs"
   },
-  "main": "dist/index.umd.js",
-  "module": "dist/index.es.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/datenel-vue3.umd.cjs",
+  "module": "dist/datenel-vue3.js",
+  "types": "dist_types/src/index.js",
+  "files": [
+    "dist",
+    "dist_types"
+  ]
 }
