@@ -224,8 +224,8 @@ function adjustYear() {
 				<div class="__datenel_week-indicator">
 					<div class="__datenel_item __datenel_title">Wk</div>
 
-					<div v-for="week in calendarWeeks" :class="`__datenel_item ${false ? '__datenel_active' : ''}`"
-						:key="calculateWeekNum(week[0]).weekNum" @click="() => { }">
+					<div v-for="week in calendarWeeks" :class="`__datenel_item ${modelValue && (modelValue.weekNum === calculateWeekNum(week[0]).weekNum && modelValue.weekYear === calculateWeekNum(week[0]).weekYear) ? '__datenel_active' : ''}`"
+						:key="calculateWeekNum(week[0]).weekNum" @click="selectWeek(calculateWeekNum(week[0]).weekYear, calculateWeekNum(week[0]).weekNum)">
 						{{ calculateWeekNum(week[0]).weekNum }}
 					</div>
 				</div>
