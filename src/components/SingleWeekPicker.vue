@@ -8,23 +8,23 @@
 export default {
 	name: 'SingleDatePicker',
 }
-</script>
 
-<script setup lang="ts">
-import { ref, defineProps, toRefs, onMounted, getCurrentInstance, watch } from 'vue'
-import { generateUniqueId, applyColor, getL10Weekday, getCalendarDates, calculateWeekNum } from '../utils'
-
-interface SingleWeekPickerPropsColorScheme {
+export interface SingleWeekPickerPropsColorScheme {
 	mainColor: string
 	accentColor: string
 	borderColor: string
 	hoverColor: string
 	reversedColor: string
 }
-interface SingleWeekPickerModelValue {
+export interface SingleWeekPickerModelValue {
 	weekYear: number
 	weekNum: number
 }
+</script>
+
+<script setup lang="ts">
+import { ref, defineProps, toRefs, onMounted, getCurrentInstance, watch } from 'vue'
+import { generateUniqueId, applyColor, getL10Weekday, getCalendarDates, calculateWeekNum } from '../utils'
 
 const selectMonth = ref(false)
 const uniqueId = generateUniqueId()
