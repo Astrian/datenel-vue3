@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import {SingleWeekPicker} from '../src'
-import {ref} from 'vue'
-
-const value = ref({weekYear: 2022, weekNum: 1})
+import { SingleWeekPicker } from '../src'
 </script>
 
 <template>
   <div class="container">
-    <SingleWeekPicker v-model="value" />
+    <SingleWeekPicker />
   </div>
 </template>
 

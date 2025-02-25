@@ -1,3 +1,15 @@
+<script lang="ts">
+/** 
+ * @name SingleWeekPicker
+ * @description A panel that allows users to select a week.
+ * @component
+ * @see {@link https://datenel.js.org/guide/vue/components/SingleWeekPicker.html}
+ */
+export default {
+	name: 'SingleDatePicker',
+}
+</script>
+
 <script setup lang="ts">
 import { ref, defineProps, toRefs, onMounted, getCurrentInstance, watch } from 'vue'
 import { generateUniqueId, applyColor, getL10Weekday, getCalendarDates, calculateWeekNum } from '../utils'

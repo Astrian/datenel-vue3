@@ -1,3 +1,15 @@
+<script lang="ts">
+/** 
+ * @name SingleDatePicker
+ * @description A panel that allows users to select a date.
+ * @component
+ * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html}
+ */
+export default {
+	name: 'SingleDatePicker',
+}
+</script>
+
 <script setup lang="ts">
 	import { ref, defineProps, watch, onMounted, toRefs, getCurrentInstance, PropType } from 'vue'
 	import { generateUniqueId, applyColor, getL10Weekday, getCalendarDates } from '../utils'
