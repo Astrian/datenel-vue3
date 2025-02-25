@@ -3,7 +3,7 @@
  * @name SingleDatePicker
  * @description A panel that allows users to select a date.
  * @component
- * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html}
+ * @see {@link https://datenel.js.org/guide/vue3/components/SingleDatePicker.html}
  */
 export default {
 	name: 'SingleDatePicker',
@@ -38,7 +38,7 @@ const props = defineProps({
 	 * - `hoverColor`: The hover color of the panel, including the hover background color of the date.
 	 * - `reversedColor`: The reversed color of the panel, including the text color of the selected date.
 	 * 
-	 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#colorscheme}
+	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleDatePicker.html#colorscheme}
 	 * 
 	 * @default { mainColor: '#000000', accentColor: '#000000', borderColor: '#e0e0e0', hoverColor: '#00000017', reversedColor: '#ffffff' }
 	 */
@@ -61,7 +61,7 @@ const props = defineProps({
 	 * that it will not effect to the screen reader, but the screen reader will still read the 
 	 * date in the user’s language.
 	 * 
-	 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#localization}
+	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleDatePicker.html#localization}
 	 * @default navigator.language
 	 */
 	localization: {
@@ -75,7 +75,7 @@ const props = defineProps({
 		* date programmatically, including situations like provide a default value or control the selected 
 		* date by parent component.
 		* 
-		* @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#value}
+		* @see {@link https://datenel.js.org/guide/vue3/components/SingleDatePicker.html#value}
 		* 
 		* @example new Date(2025, 0, 1)
 		* @default undefined (the panel will be in read-only mode)
@@ -92,7 +92,7 @@ const props = defineProps({
 	 * 
 	 * The parameter will be ignored if the array length is not 2.
 	 * 
-	 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#availablerange}
+	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleDatePicker.html#availablerange}
 	 * 
 	 * @example [new Date(2025, 0, 1), new Date(2025, 11, 31)]
 	 * @example [new Date(2025, 0, 1), null]
@@ -110,7 +110,7 @@ const props = defineProps({
 	 * that the close button is not visible, but can be read by screen reader. The close 
 	 * button for the screen reader is only available when this prop is not `undefined`.
 	 * 
-	 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#onclose-void}
+	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleDatePicker.html#onclose-void}
 	 * 
 	 * @default undefined
 	 */
