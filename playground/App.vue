@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import {SingleDatePicker} from '../src'
+import {SingleWeekPicker} from '../src'
 import {ref} from 'vue'
 
-const date = ref(new Date())
+const value = ref({weekYear: 2022, weekNum: 1})
 </script>
 
 <template>
-  <div>{{date.toDateString()}}</div>
   <div class="container">
-    <SingleDatePicker :available-range="[new Date(2025, 0, 1), null]" v-model:model-value="date" @close="console.log('close')" />
+    <SingleWeekPicker v-model="value" />
   </div>
 </template>
 
