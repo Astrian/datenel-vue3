@@ -34,5 +34,10 @@
   "files": [
     "dist",
     "dist_types"
-  ]
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Astrian/datenel-vue3.git"
+  }
 }
