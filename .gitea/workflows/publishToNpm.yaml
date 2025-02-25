@@ -3,6 +3,7 @@ name: Publish to npm
 on:
   push:
     branches:
+      - main
       - dev
 
 jobs:
@@ -26,7 +27,7 @@ jobs:
         id: package_name
         run: |
           if [ "${{ gitea.ref }}" == "refs/heads/main" ]; then
-            echo "PACKAGE_NAME=datenel-react" >> $GITEA_ENV
+            echo "PACKAGE_NAME=datenel-vue3" >> $GITEA_ENV
             echo "ACCESS_LEVEL=public" >> $GITEA_ENV
           elif [ "${{ gitea.ref }}" == "refs/heads/dev" ]; then
             echo "PACKAGE_NAME=@astrian/datenel-vue3-dev" >> $GITEA_ENV

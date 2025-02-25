@@ -1,239 +1,251 @@
+<script lang="ts">
+/** 
+ * @name SingleDatePicker
+ * @description A panel that allows users to select a date.
+ * @component
+ * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html}
+ */
+export default {
+	name: 'SingleDatePicker',
+}
+
+export interface SingleDatePickerPropsColorScheme {
+	mainColor: string
+	accentColor: string
+	borderColor: string
+	hoverColor: string
+	reversedColor: string
+}
+
+export type SingleDatePickerPropsAvailableDates = [Date | null, Date | null]
+</script>
+
 <script setup lang="ts">
-	import { ref, defineProps, watch, onMounted, toRefs, getCurrentInstance, PropType } from 'vue'
-	import { generateUniqueId, applyColor, getL10Weekday, getCalendarDates } from '../utils'
+import { ref, defineProps, watch, onMounted, toRefs, getCurrentInstance, PropType } from 'vue'
+import { generateUniqueId, applyColor, getL10Weekday, getCalendarDates } from '../utils'
 
-	interface SingleDatePickerPropsColorScheme {
-		mainColor: string
-		accentColor: string
-		borderColor: string
-		hoverColor: string
-		reversedColor: string
+const props = defineProps({
+	/**
+	 * The color scheme of the component
+	 * 
+	 * @description Customize the color scheme of the component.
+	 * 
+	 * The object should contain the following properties:
+	 * 
+	 * - `mainColor`: The main color of the panel, including the text color and the border color.
+	 * - `accentColor`: The accent color of the panel, including the background color of the selected date.
+	 * - `borderColor`: The border color of the panel, including the divider color between the header and the body.
+	 * - `hoverColor`: The hover color of the panel, including the hover background color of the date.
+	 * - `reversedColor`: The reversed color of the panel, including the text color of the selected date.
+	 * 
+	 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#colorscheme}
+	 * 
+	 * @default { mainColor: '#000000', accentColor: '#000000', borderColor: '#e0e0e0', hoverColor: '#00000017', reversedColor: '#ffffff' }
+	 */
+	colorScheme: {
+		type: Object as () => SingleDatePickerPropsColorScheme,
+		default: () => ({
+			mainColor: '#000000',
+			accentColor: '#000000',
+			borderColor: '#e0e0e0',
+			hoverColor: '#00000017',
+			reversedColor: '#ffffff',
+		}),
+		required: false,
+	},
+	/**
+	 * Localization
+	 * @description The language code that will be used to localize the panel.
+	 * 
+	 * Accept standard ISO 639-1 language code, such as 'zh-CN', 'en-US', 'ja-JP', etc. Note 
+	 * that it will not effect to the screen reader, but the screen reader will still read the 
+	 * date in the user’s language.
+	 * 
+	 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#localization}
+	 * @default navigator.language
+	 */
+	localization: {
+		type: String,
+		required: false,
+	},
+	/**
+		* Value of the selected date.
+		* 
+		* @description Control the selected
+		* date programmatically, including situations like provide a default value or control the selected 
+		* date by parent component.
+		* 
+		* @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#value}
+		* 
+		* @example new Date(2025, 0, 1)
+		* @default undefined (the panel will be in read-only mode)
+		*/
+	modelValue: {
+		type: Date,
+		required: false,
+	},
+	/**
+	 * Available range of dates
+	 * 
+	 * @description Limit a range of dates that can be selected. It should be an array of two dates, which the first
+	 * one is the available range start date, and the second one is the available range end date. 
+	 * 
+	 * The parameter will be ignored if the array length is not 2.
+	 * 
+	 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#availablerange}
+	 * 
+	 * @example [new Date(2025, 0, 1), new Date(2025, 11, 31)]
+	 * @example [new Date(2025, 0, 1), null]
+	 * @example [null, new Date(2025, 11, 31)]
+	 * @example [new Date(2025, 11, 31), new Date(2025, 0, 1)]
+	 * @default undefined
+	 */
+	availableRange: {
+		type: Array as unknown as PropType<SingleDatePickerPropsAvailableDates>,
+		required: false,
+	},
+	/**
+	 * Event handler when the panel is closed.
+	 * @description User requires to close the panel without select a specific date. Note 
+	 * that the close button is not visible, but can be read by screen reader. The close 
+	 * button for the screen reader is only available when this prop is not `undefined`.
+	 * 
+	 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#onclose-void}
+	 * 
+	 * @default undefined
+	 */
+	close: {
+		type: Function,
+		required: false,
+	}
+})
+
+const emit = defineEmits(['update:modelValue', 'close'])
+const selectMonth = ref(false)
+const uniqueId = generateUniqueId()
+const currentMonth = ref(new Date().getMonth())
+const currentYear = ref(new Date().getFullYear())
+const l10nDays = ref<string[]>([])
+const dates = ref<Date[]>([])
+const hasCloseListener = getCurrentInstance()?.vnode?.props?.onClose !== undefined
+const availableRangeStart = ref<Date | null>(null)
+const availableRangeEnd = ref<Date | null>(null)
+
+const { colorScheme, localization, availableRange } = toRefs(props)
+
+watch(colorScheme, newVal => {
+	applyColor(uniqueId, newVal)
+})
+
+watch([currentMonth, currentYear], () => {
+	dates.value = getCalendarDates(currentMonth.value, currentYear.value)
+})
+
+watch([availableRange], () => {
+	calculateAvailableRange()
+})
+
+onMounted(() => {
+	applyColor(uniqueId, colorScheme.value)
+	l10nDays.value = getL10Weekday(localization?.value || navigator.languages[0])
+	
+	if (props.modelValue) {
+		currentMonth.value = props.modelValue.getMonth()
+		currentYear.value = props.modelValue.getFullYear()
+	} else {
+		currentMonth.value = new Date().getMonth()
+		currentYear.value = new Date().getFullYear()
+	}
+	dates.value = getCalendarDates(currentMonth.value, currentYear.value)
+
+	calculateAvailableRange()
+})
+
+function goToLastMonth() {
+	if (currentMonth.value === 0) {
+		currentMonth.value = 11
+		currentYear.value -= 1
+	} else {
+		currentMonth.value -= 1
+	}
+}
+
+function goToNextMonth() {
+	if (currentMonth.value === 11) {
+		currentMonth.value = 0
+		currentYear.value += 1
+	} else {
+		currentMonth.value += 1
+	}
+}
+
+function notAvailable(date: Date): boolean {
+	return currentMonth.value !== date.getMonth() || (availableRangeStart.value !== null && date < availableRangeStart.value) || (availableRangeEnd.value !== null && date > availableRangeEnd.value)
+}
+
+function selectDate(date: Date) {
+	emit('update:modelValue', date)
+}
+
+function changeYear(event: Event) {
+	const target = event.target as HTMLInputElement
+	const year = parseInt(target.value)
+	if (year) currentYear.value = year
+}
+
+function adjustYear() {
+	if (currentYear.value < 100) currentYear.value = parseInt(`20${currentYear.value}`)
+}
+
+function monthNotAvailable(month: number): boolean {
+	// When the last day of a month not inside the range of available dates
+	const lastDayOfMonth = new Date(currentYear.value, month + 1, 0)
+	if (availableRangeStart.value && lastDayOfMonth < availableRangeStart.value) return true
+	// When the first day of a month not inside the range of available dates
+	const firstDayOfMonth = new Date(currentYear.value, month, 1)
+	if (availableRangeEnd.value && firstDayOfMonth > availableRangeEnd.value) return true
+	return false
+}
+
+function closePanel() {
+	emit('close')
+}
+
+function calculateAvailableRange() {
+	if (!props.availableRange) {
+		availableRangeStart.value = null
+		availableRangeEnd.value = null
+		return
 	}
 
-	type SingleDatePickerPropsAvailableDates = [Date | null, Date | null]
+	if (props.availableRange.length !== 2) {
+		console.warn('Invalid availableRange: The length of the array should be 2. The parameter will be ignored.')
+		availableRangeStart.value = null
+		availableRangeEnd.value = null
+		return
+	}
 
-	const props = defineProps({
-		/**
-		 * The color scheme of the component
-		 * 
-		 * @description Customize the color scheme of the component.
-		 * 
-		 * The object should contain the following properties:
-		 * 
-		 * - `mainColor`: The main color of the panel, including the text color and the border color.
-		 * - `accentColor`: The accent color of the panel, including the background color of the selected date.
-		 * - `borderColor`: The border color of the panel, including the divider color between the header and the body.
-		 * - `hoverColor`: The hover color of the panel, including the hover background color of the date.
-		 * - `reversedColor`: The reversed color of the panel, including the text color of the selected date.
-		 * 
-		 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#colorscheme}
-		 * 
-		 * @default { mainColor: '#000000', accentColor: '#000000', borderColor: '#e0e0e0', hoverColor: '#00000017', reversedColor: '#ffffff' }
-		 */
-		colorScheme: {
-			type: Object as () => SingleDatePickerPropsColorScheme,
-			default: () => ({
-				mainColor: '#000000',
-				accentColor: '#000000',
-				borderColor: '#e0e0e0',
-				hoverColor: '#00000017',
-				reversedColor: '#ffffff',
-			}),
-			required: false,
-		},
-		/**
-		 * Localization
-		 * @description The language code that will be used to localize the panel.
-		 * 
-		 * Accept standard ISO 639-1 language code, such as 'zh-CN', 'en-US', 'ja-JP', etc. Note 
-		 * that it will not effect to the screen reader, but the screen reader will still read the 
-		 * date in the user’s language.
-		 * 
-		 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#localization}
-		 * @default navigator.language
-		 */
-		localization: {
-			type: String,
-			required: false,
-		},
-		/**
-			* Value of the selected date.
-			* 
-			* @description Control the selected
-			* date programmatically, including situations like provide a default value or control the selected 
-			* date by parent component.
-			* 
-			* @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#value}
-			* 
-			* @example new Date(2025, 0, 1)
-			* @default undefined (the panel will be in read-only mode)
-			*/
-		modelValue: {
-			type: Date,
-			required: false,
-		},
-		/**
-		 * Available range of dates
-		 * 
-		 * @description Limit a range of dates that can be selected. It should be an array of two dates, which the first
-		 * one is the available range start date, and the second one is the available range end date. 
-		 * 
-		 * The parameter will be ignored if the array length is not 2.
-		 * 
-		 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#availablerange}
-		 * 
-		 * @example [new Date(2025, 0, 1), new Date(2025, 11, 31)]
-		 * @example [new Date(2025, 0, 1), null]
-		 * @example [null, new Date(2025, 11, 31)]
-		 * @example [new Date(2025, 11, 31), new Date(2025, 0, 1)]
-		 * @default undefined
-		 */
-		availableRange: {
-			type: Array as unknown as PropType<SingleDatePickerPropsAvailableDates>,
-			required: false,
-		},
-		/**
-		 * Event handler when the panel is closed.
-		 * @description User requires to close the panel without select a specific date. Note 
-		 * that the close button is not visible, but can be read by screen reader. The close 
-		 * button for the screen reader is only available when this prop is not `undefined`.
-		 * 
-		 * @see {@link https://datenel.js.org/guide/vue/components/SingleDatePicker.html#onclose-void}
-		 * 
-		 * @default undefined
-		 */
-		close: {
-			type: Function,
-			required: false,
-		}
-	})
+	const [start, end] = props.availableRange
 
-	const emit = defineEmits(['update:modelValue', 'close'])
-	const selectMonth = ref(false)
-	const uniqueId = generateUniqueId()
-	const currentMonth = ref(new Date().getMonth())
-	const currentYear = ref(new Date().getFullYear())
-	const l10nDays = ref<string[]>([])
-	const dates = ref<Date[]>([])
-	const hasCloseListener = getCurrentInstance()?.vnode?.props?.onClose !== undefined
-	const availableRangeStart = ref<Date | null>(null)
-	const availableRangeEnd = ref<Date | null>(null)
-
-	const { colorScheme, localization, availableRange } = toRefs(props)
-
-	watch(colorScheme, newVal => {
-		applyColor(uniqueId, newVal)
-	})
-
-	watch([currentMonth, currentYear], () => {
-		dates.value = getCalendarDates(currentMonth.value, currentYear.value)
-	})
-
-	watch([availableRange], () => {
-		calculateAvailableRange()
-	})
-
-	onMounted(() => {
-		applyColor(uniqueId, colorScheme.value)
-		l10nDays.value = getL10Weekday(localization?.value || navigator.languages[0])
-		
-		if (props.modelValue) {
-			currentMonth.value = props.modelValue.getMonth()
-			currentYear.value = props.modelValue.getFullYear()
+	if (start && end) {
+		if (start > end) {
+			availableRangeStart.value = end
+			availableRangeEnd.value = start
 		} else {
-			currentMonth.value = new Date().getMonth()
-			currentYear.value = new Date().getFullYear()
-		}
-		dates.value = getCalendarDates(currentMonth.value, currentYear.value)
-
-		calculateAvailableRange()
-	})
-
-	function goToLastMonth() {
-		if (currentMonth.value === 0) {
-			currentMonth.value = 11
-			currentYear.value -= 1
-		} else {
-			currentMonth.value -= 1
-		}
-	}
-
-	function goToNextMonth() {
-		if (currentMonth.value === 11) {
-			currentMonth.value = 0
-			currentYear.value += 1
-		} else {
-			currentMonth.value += 1
-		}
-	}
-
-	function notAvailable(date: Date): boolean {
-		return currentMonth.value !== date.getMonth() || (availableRangeStart.value !== null && date < availableRangeStart.value) || (availableRangeEnd.value !== null && date > availableRangeEnd.value)
-	}
-
-	function selectDate(date: Date) {
-		emit('update:modelValue', date)
-	}
-
-	function changeYear(event: Event) {
-		const target = event.target as HTMLInputElement
-		const year = parseInt(target.value)
-		if (year) currentYear.value = year
-	}
-
-	function adjustYear() {
-		if (currentYear.value < 100) currentYear.value = parseInt(`20${currentYear.value}`)
-	}
-
-	function monthNotAvailable(month: number): boolean {
-		// When the last day of a month not inside the range of available dates
-		const lastDayOfMonth = new Date(currentYear.value, month + 1, 0)
-		if (availableRangeStart.value && lastDayOfMonth < availableRangeStart.value) return true
-		// When the first day of a month not inside the range of available dates
-		const firstDayOfMonth = new Date(currentYear.value, month, 1)
-		if (availableRangeEnd.value && firstDayOfMonth > availableRangeEnd.value) return true
-		return false
-	}
-
-	function closePanel() {
-		emit('close')
-	}
-
-	function calculateAvailableRange() {
-		if (!props.availableRange) {
-			availableRangeStart.value = null
-			availableRangeEnd.value = null
-			return
-		}
-
-		if (props.availableRange.length !== 2) {
-			console.warn('Invalid availableRange: The length of the array should be 2. The parameter will be ignored.')
-			availableRangeStart.value = null
-			availableRangeEnd.value = null
-			return
-		}
-
-		const [start, end] = props.availableRange
-
-		if (start && end) {
-			if (start > end) {
-				availableRangeStart.value = end
-				availableRangeEnd.value = start
-			} else {
-				availableRangeStart.value = start
-				availableRangeEnd.value = end
-			}
-		} else if (start && !end) {
 			availableRangeStart.value = start
-			availableRangeEnd.value = null
-		} else if (!start && end) {
-			availableRangeStart.value = null
 			availableRangeEnd.value = end
-		} else {
-			availableRangeStart.value = null
-			availableRangeEnd.value = null
 		}
+	} else if (start && !end) {
+		availableRangeStart.value = start
+		availableRangeEnd.value = null
+	} else if (!start && end) {
+		availableRangeStart.value = null
+		availableRangeEnd.value = end
+	} else {
+		availableRangeStart.value = null
+		availableRangeEnd.value = null
 	}
+}
 
 </script>
 
