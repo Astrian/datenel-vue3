@@ -75,7 +75,7 @@ const props = defineProps({
 		* date programmatically, including situations like provide a default value or control the selected 
 		* date by parent component.
 		* 
-		* @see {@link https://datenel.js.org/guide/vue3/components/SingleDatePicker.html#value}
+		* @see {@link https://datenel.js.org/guide/vue3/components/SingleDatePicker.html#modelvalue-a-k-a-v-model}
 		* 
 		* @example new Date(2025, 0, 1)
 		* @default undefined (the panel will be in read-only mode)
