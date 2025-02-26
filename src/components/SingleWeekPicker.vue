@@ -3,7 +3,7 @@
  * @name SingleWeekPicker
  * @description A panel that allows users to select a week.
  * @component
- * @see {@link https://datenel.js.org/guide/vue/components/SingleWeekPicker.html}
+ * @see {@link https://datenel.js.org/guide/vue3/components/SingleWeekPicker.html}
  */
 export default {
 	name: 'SingleDatePicker',
@@ -46,7 +46,7 @@ const props = defineProps({
 	 * - `hoverColor`: The hover color of the panel, including the hover background color of the date.
 	 * - `reversedColor`: The reversed color of the panel, including the text color of the selected date.
 	 * 
-	 * @see {@link https://datenel.js.org/guide/vue/components/SingleWeekPicker.html#colorscheme}
+	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleWeekPicker.html#colorscheme}
 	 * 
 	 * @default { mainColor: '#000000', accentColor: '#000000', borderColor: '#e0e0e0', hoverColor: '#00000017', reversedColor: '#ffffff' }
 	 */
@@ -69,7 +69,7 @@ const props = defineProps({
 	 * that it will not effect to the screen reader, but the screen reader will still read the 
 	 * date in the user’s language.
 	 * 
-	 * @see {@link https://datenel.js.org/guide/vue/components/SingleWeekPicker.html#localization}
+	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleWeekPicker.html#localization}
 	 * @default navigator.language
 	 */
 	localization: {
@@ -81,12 +81,26 @@ const props = defineProps({
 	 * 
 	 * @description The model value of the component.
 	 * 
-	 * @see {@link https://datenel.js.org/guide/vue/components/SingleWeekPicker.html#modelvalue}
+	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleWeekPicker.html#modelvalue-a-k-a-v-model}
 	 */
 	modelValue: {
 		type: Object as () => SingleWeekPickerModelValue,
 		required: false,
 	},
+	/**
+	 * Event handler when the panel is closed.
+	 * @description User requires to close the panel without select a specific date. Note 
+	 * that the close button is not visible, but can be read by screen reader. The close 
+	 * button for the screen reader is only available when this prop is not `undefined`.
+	 * 
+	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleWeekPicker.html#close-void}
+	 * 
+	 * @default undefined
+	 */
+	close: {
+		type: Function,
+		required: false,
+	}
 })
 
 const { colorScheme, localization } = toRefs(props)

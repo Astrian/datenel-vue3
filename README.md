@@ -44,7 +44,7 @@ const date = ref(new Date())
 
 ```
 
-For more information and live demo, refer to [Datenel’s documentation](https://datenel.js.org/guide/vue/gettingstart.html).
+For more information and live demo, refer to [Datenel’s documentation](https://datenel.js.org/guide/vue3/gettingstart.html).
 
 ## Supported Components & Props
 
