@@ -110,7 +110,7 @@ const props = defineProps({
 	 * that the close button is not visible, but can be read by screen reader. The close 
 	 * button for the screen reader is only available when this prop is not `undefined`.
 	 * 
-	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleDatePicker.html#onclose-void}
+	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleDatePicker.html#close-void}
 	 * 
 	 * @default undefined
 	 */

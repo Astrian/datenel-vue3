@@ -81,12 +81,26 @@ const props = defineProps({
 	 * 
 	 * @description The model value of the component.
 	 * 
-	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleWeekPicker.html#modelvalue}
+	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleWeekPicker.html#modelvalue-a-k-a-v-model}
 	 */
 	modelValue: {
 		type: Object as () => SingleWeekPickerModelValue,
 		required: false,
 	},
+	/**
+	 * Event handler when the panel is closed.
+	 * @description User requires to close the panel without select a specific date. Note 
+	 * that the close button is not visible, but can be read by screen reader. The close 
+	 * button for the screen reader is only available when this prop is not `undefined`.
+	 * 
+	 * @see {@link https://datenel.js.org/guide/vue3/components/SingleWeekPicker.html#close-void}
+	 * 
+	 * @default undefined
+	 */
+	close: {
+		type: Function,
+		required: false,
+	}
 })
 
 const { colorScheme, localization } = toRefs(props)
