@@ -2,7 +2,9 @@
 
 **Datenel = Date + Panel**
 
-Datenel is a web UI component for selecting dates. It provides a customizable date picker panel that can be easily integrated into your React applications.
+Datenel is a web UI component for selecting dates. It provides a customizable date picker panel that can be easily integrated into your Vue.js 3 applications.
+
+Want to use Datenel in React? [We got you](https://www.npmjs.com/package/datenel-react).
 
 ![A preview of Datenel components for SingleWeekPicker and SingleDayPicker](https://s2.loli.net/2025/02/21/CTnxMcEOg53WK9y.png)
 
